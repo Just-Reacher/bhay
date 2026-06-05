@@ -289,6 +289,7 @@
   <a href="gallery.html" class="nav-back" id="backBtn">← Gallery</a>
   <span class="nav-title">Thank You</span>
   <button class="icon-btn" id="themeToggle" title="Toggle theme">☀</button>
+  <button class="icon-btn" id="musicToggle" title="Toggle music">♪</button>
 </nav>
 
 <!-- MAIN CONTENT -->
@@ -353,6 +354,10 @@
   </div>
 
 </div>
+
+<audio id="bgMusic" loop preload="none">
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
 
 <!-- ============================================
      JAVASCRIPT
@@ -440,6 +445,36 @@
     const isLight = body.classList.contains('light');
     btn.textContent = isLight ? '☽' : '☀';
     localStorage.setItem('storyTheme', isLight ? 'light' : 'dark');
+  });
+})();
+
+/* ------------------------------------------------
+   MUSIC TOGGLE
+------------------------------------------------ */
+(function() {
+  const btn   = document.getElementById('musicToggle');
+  const audio = document.getElementById('bgMusic');
+  let playing = false;
+
+  if (localStorage.getItem('musicPlaying') === 'true') {
+    audio.play().catch(() => {});
+    playing = true;
+    btn.textContent = '♫';
+    btn.style.color = 'var(--violet)';
+  }
+
+  btn.addEventListener('click', () => {
+    if (!playing) {
+      audio.play().catch(() => {});
+      btn.textContent = '♫';
+      btn.style.color = 'var(--violet)';
+    } else {
+      audio.pause();
+      btn.textContent = '♪';
+      btn.style.color = '';
+    }
+    playing = !playing;
+    localStorage.setItem('musicPlaying', playing);
   });
 })();
 

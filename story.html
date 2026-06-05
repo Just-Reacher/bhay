@@ -861,6 +861,15 @@ function launchConfetti() {
   const btn   = document.getElementById('musicToggle');
   const audio = document.getElementById('bgMusic');
   let playing = false;
+
+  // Auto-play if it was playing on the previous page
+  if (localStorage.getItem('musicPlaying') === 'true') {
+    audio.play().catch(() => {});
+    playing = true;
+    btn.textContent = '♫';
+    btn.style.color = 'var(--violet)';
+  }
+
   btn.addEventListener('click', () => {
     if (!playing) {
       audio.play().catch(() => {});
@@ -872,6 +881,7 @@ function launchConfetti() {
       btn.style.color = '';
     }
     playing = !playing;
+    localStorage.setItem('musicPlaying', playing);
   });
 })();
 

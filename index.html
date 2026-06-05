@@ -719,11 +719,17 @@ document.getElementById('beginBtn').addEventListener('click', function(e) {
   const audio = document.getElementById('bgMusic');
   let playing = false;
 
+  // Auto-play if it was playing on the previous page
+  if (localStorage.getItem('musicPlaying') === 'true') {
+    audio.play().catch(() => {});
+    playing = true;
+    btn.textContent = '♫';
+    btn.style.color = 'var(--violet)';
+  }
+
   btn.addEventListener('click', () => {
     if (!playing) {
-      audio.play().catch(() => {
-        /* Silently fail if no source — user can add their own */
-      });
+      audio.play().catch(() => {});
       btn.textContent = '♫';
       btn.style.color = 'var(--violet)';
     } else {
@@ -732,6 +738,7 @@ document.getElementById('beginBtn').addEventListener('click', function(e) {
       btn.style.color = '';
     }
     playing = !playing;
+    localStorage.setItem('musicPlaying', playing);
   });
 })();
 
