@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>For Belinda — A Story Just For You</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Cinzel:wght@400;500&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2218%22 fill=%22%230b0914%22/><text y=%22.9em%22 x=%2250%25%22 dominant-baseline=%22auto%22 text-anchor=%22middle%22 font-size=%2268%22 font-family=%22Georgia,serif%22 fill=%22%239b5de5%22>B</text></svg>" />
+  <style>
+    /* ============================================
+       CSS VARIABLES & RESET
+    ============================================ */
+    :root {
+      --ink:        #0d0a14;
+      --deep:       #110d1e;
+      --velvet:     #1a1130;
+      --plum:       #2e1a47;
+      --orchid:     #7b3fa0;
+      --violet:     #9b5de5;
+      --lavender:   #c8a8f0;
+      --blush:      #f4a7c3;
+      --gold:       #f0d080;
+      --pearl:      #f8f2ff;
+      --mist:       rgba(200,168,240,0.08);
+      --glow:       rgba(155,93,229,0.35);
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-title: 'Cinzel', serif;
+      --font-body:  'Lato', sans-serif;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--ink);
+      color: var(--pearl);
+      font-family: var(--font-serif);
+      min-height: 100vh;
+      overflow-x: hidden;
+      cursor: default;
+    }
+
+    /* ============================================
+       CANVAS — PARTICLE BACKGROUND
+    ============================================ */
+    #starCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ============================================
+       AURORA GRADIENT OVERLAY
+    ============================================ */
+    .aurora {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(90,30,120,0.45) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(30,15,80,0.50) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 40% at 55% 50%, rgba(120,50,180,0.18) 0%, transparent 65%);
+      animation: auroraDrift 14s ease-in-out infinite alternate;
+    }
+    @keyframes auroraDrift {
+      0%   { opacity: 0.7; transform: scale(1) translateY(0); }
+      100% { opacity: 1;   transform: scale(1.04) translateY(-18px); }
+    }
+
+    /* ============================================
+       FLOATING ORBS
+    ============================================ */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 1;
+      animation: orbFloat linear infinite;
+    }
+    .orb-1 {
+      width: 340px; height: 340px;
+      background: radial-gradient(circle, rgba(155,93,229,0.28) 0%, transparent 70%);
+      top: -80px; left: -80px;
+      animation-duration: 18s;
+    }
+    .orb-2 {
+      width: 260px; height: 260px;
+      background: radial-gradient(circle, rgba(244,167,195,0.20) 0%, transparent 70%);
+      bottom: 5%; right: -60px;
+      animation-duration: 22s;
+      animation-direction: reverse;
+    }
+    .orb-3 {
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(240,208,128,0.12) 0%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      animation-duration: 26s;
+    }
+    @keyframes orbFloat {
+      0%   { transform: translateY(0) rotate(0deg); }
+      33%  { transform: translateY(-30px) rotate(120deg); }
+      66%  { transform: translateY(20px) rotate(240deg); }
+      100% { transform: translateY(0) rotate(360deg); }
+    }
+
+    /* ============================================
+       MAIN WRAPPER
+    ============================================ */
+    .wrapper {
+      position: relative;
+      z-index: 10;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+
+    /* ============================================
+       DECORATIVE TOP LINE
+    ============================================ */
+    .deco-line {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeSlideDown 1s ease forwards 0.4s;
+    }
+    .deco-line span {
+      font-family: var(--font-title);
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      color: var(--lavender);
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+    .deco-line::before,
+    .deco-line::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      max-width: 80px;
+      background: linear-gradient(90deg, transparent, var(--orchid), transparent);
+    }
+
+    /* ============================================
+       MEDALLION / MONOGRAM
+    ============================================ */
+    .medallion {
+      position: relative;
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 2rem;
+      opacity: 0;
+      animation: fadeSlideDown 1.2s ease forwards 0.7s;
+    }
+    .medallion-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(155,93,229,0.5);
+      animation: ringPulse 3s ease-in-out infinite;
+    }
+    .medallion-ring-outer {
+      inset: -10px;
+      border-color: rgba(155,93,229,0.18);
+      animation-delay: 0.5s;
+    }
+    @keyframes ringPulse {
+      0%, 100% { opacity: 0.5; transform: scale(1); }
+      50%       { opacity: 1;   transform: scale(1.04); }
+    }
+    .medallion-letter {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-title);
+      font-size: 2.2rem;
+      color: var(--lavender);
+      text-shadow: 0 0 20px var(--glow);
+    }
+
+    /* ============================================
+       HEADLINE — FOR BELINDA
+    ============================================ */
+    .headline-for {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(0.85rem, 2.5vw, 1rem);
+      letter-spacing: 0.22em;
+      color: var(--lavender);
+      opacity: 0;
+      animation: fadeSlideDown 1s ease forwards 1s;
+      margin-bottom: 0.5rem;
+    }
+
+    .headline-name {
+      font-family: var(--font-title);
+      font-size: clamp(3rem, 12vw, 6.5rem);
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--lavender) 0%, var(--violet) 40%, var(--blush) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 30px rgba(155,93,229,0.4));
+      opacity: 0;
+      animation: fadeScaleIn 1.4s cubic-bezier(0.16,1,0.3,1) forwards 1.3s;
+      margin-bottom: 1.5rem;
+    }
+
+    @keyframes fadeScaleIn {
+      from { opacity: 0; transform: scale(0.88) translateY(20px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* ============================================
+       TYPING WELCOME TEXT
+    ============================================ */
+    .typing-container {
+      min-height: 2.4rem;
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeSlideDown 1s ease forwards 1.8s;
+    }
+    .typing-text {
+      font-family: var(--font-serif);
+      font-size: clamp(1.1rem, 4vw, 1.5rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--pearl);
+      opacity: 0.85;
+    }
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.1em;
+      background: var(--violet);
+      margin-left: 3px;
+      vertical-align: middle;
+      animation: blink 0.9s step-end infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    /* ============================================
+       INTRO PARAGRAPH
+    ============================================ */
+    .intro-text {
+      max-width: 480px;
+      font-size: clamp(0.95rem, 3vw, 1.08rem);
+      font-weight: 300;
+      line-height: 1.9;
+      color: rgba(248,242,255,0.65);
+      margin-bottom: 3rem;
+      opacity: 0;
+      animation: fadeSlideDown 1s ease forwards 2.2s;
+    }
+    .intro-text em {
+      color: var(--lavender);
+      font-style: italic;
+    }
+
+    /* ============================================
+       BEGIN BUTTON
+    ============================================ */
+    .btn-begin {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem 2.5rem;
+      font-family: var(--font-title);
+      font-size: 0.8rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--pearl);
+      text-decoration: none;
+      border: 1px solid rgba(155,93,229,0.45);
+      border-radius: 2px;
+      background: rgba(46,26,71,0.35);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      cursor: pointer;
+      overflow: hidden;
+      opacity: 0;
+      animation: fadeSlideDown 1s ease forwards 2.6s;
+      transition: border-color 0.3s, color 0.3s, box-shadow 0.3s;
+    }
+    .btn-begin::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--orchid), var(--violet));
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .btn-begin:hover {
+      border-color: var(--violet);
+      box-shadow: 0 0 40px rgba(155,93,229,0.35), 0 0 80px rgba(155,93,229,0.15);
+      color: #fff;
+    }
+    .btn-begin:hover::before { opacity: 0.25; }
+    .btn-begin span { position: relative; z-index: 1; }
+    .btn-begin .arrow {
+      position: relative;
+      z-index: 1;
+      font-size: 1rem;
+      transition: transform 0.3s;
+    }
+    .btn-begin:hover .arrow { transform: translateX(5px); }
+
+    /* ============================================
+       SCROLL HINT
+    ============================================ */
+    .scroll-hint {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      animation: fadeSlideDown 1s ease forwards 3.2s;
+    }
+    .scroll-hint p {
+      font-family: var(--font-title);
+      font-size: 0.55rem;
+      letter-spacing: 0.3em;
+      color: var(--lavender);
+      opacity: 0.45;
+      text-transform: uppercase;
+    }
+    .scroll-mouse {
+      width: 22px;
+      height: 36px;
+      border: 1px solid rgba(155,93,229,0.35);
+      border-radius: 11px;
+      position: relative;
+    }
+    .scroll-dot {
+      width: 3px;
+      height: 6px;
+      background: var(--violet);
+      border-radius: 2px;
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      animation: scrollDot 2s ease-in-out infinite;
+    }
+    @keyframes scrollDot {
+      0%   { opacity: 1; top: 6px; }
+      80%  { opacity: 0; top: 20px; }
+      100% { opacity: 0; top: 6px; }
+    }
+
+    /* ============================================
+       MUSIC TOGGLE
+    ============================================ */
+    .music-toggle {
+      position: fixed;
+      top: 1.2rem;
+      right: 1.2rem;
+      z-index: 100;
+      background: rgba(30,17,48,0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(155,93,229,0.3);
+      color: var(--lavender);
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s;
+      opacity: 0;
+      animation: fadeIn 1s ease forwards 3.5s;
+    }
+    .music-toggle:hover {
+      border-color: var(--violet);
+      box-shadow: 0 0 20px var(--glow);
+      color: var(--pearl);
+    }
+
+    /* ============================================
+       THEME TOGGLE
+    ============================================ */
+    .theme-toggle {
+      position: fixed;
+      top: 1.2rem;
+      left: 1.2rem;
+      z-index: 100;
+      background: rgba(30,17,48,0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(155,93,229,0.3);
+      color: var(--lavender);
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s;
+      opacity: 0;
+      animation: fadeIn 1s ease forwards 3.5s;
+    }
+    .theme-toggle:hover {
+      border-color: var(--violet);
+      box-shadow: 0 0 20px var(--glow);
+    }
+
+    /* ============================================
+       LIGHT MODE
+    ============================================ */
+    body.light {
+      --ink: #f5f0ff;
+      --deep: #ede4ff;
+      --velvet: #ddd0ff;
+      --pearl: #1a0d2e;
+      background: #f5f0ff;
+    }
+    body.light .aurora {
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(180,130,240,0.25) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(120,80,200,0.20) 0%, transparent 55%);
+    }
+    body.light .intro-text { color: rgba(26,13,46,0.65); }
+    body.light .btn-begin  { color: #1a0d2e; background: rgba(220,200,255,0.5); }
+
+    /* ============================================
+       PAGE TRANSITION
+    ============================================ */
+    .page-transition {
+      position: fixed;
+      inset: 0;
+      background: var(--ink);
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    .page-transition.active { opacity: 1; pointer-events: all; }
+
+    /* ============================================
+       KEYFRAMES
+    ============================================ */
+    @keyframes fadeSlideDown {
+      from { opacity: 0; transform: translateY(-18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* ============================================
+       FOOTER
+    ============================================ */
+    .footer {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      padding: 1rem;
+      text-align: center;
+      font-family: var(--font-title);
+      font-size: 0.5rem;
+      letter-spacing: 0.25em;
+      color: rgba(200,168,240,0.25);
+      text-transform: uppercase;
+      z-index: 10;
+    }
+
+    /* ============================================
+       RESPONSIVE
+    ============================================ */
+    @media (max-width: 480px) {
+      .wrapper { padding: 5rem 1.2rem 6rem; }
+      .intro-text { font-size: 0.92rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Page Fade Transition Overlay -->
+<div class="page-transition" id="pageTransition"></div>
+
+<!-- Particle Canvas -->
+<canvas id="starCanvas"></canvas>
+
+<!-- Aurora Background -->
+<div class="aurora"></div>
+
+<!-- Floating Orbs -->
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- Controls -->
+<button class="theme-toggle" id="themeToggle" title="Toggle theme" aria-label="Toggle theme">☀</button>
+<button class="music-toggle" id="musicToggle" title="Toggle music" aria-label="Toggle music">♪</button>
+
+<!-- Hidden audio element -->
+<audio id="bgMusic" loop preload="none">
+  <!-- Add your music source here: <source src="music.mp3" type="audio/mpeg"> -->
+</audio>
+
+<!-- Main Content -->
+<main class="wrapper">
+
+  <!-- Decorative line -->
+  <div class="deco-line"><span>A Gift in Words</span></div>
+
+  <!-- Medallion with initial B -->
+  <div class="medallion">
+    <div class="medallion-ring medallion-ring-outer"></div>
+    <div class="medallion-ring"></div>
+    <div class="medallion-letter">B</div>
+  </div>
+
+  <!-- For / Name -->
+  <p class="headline-for">for</p>
+  <h1 class="headline-name">Belinda</h1>
+
+  <!-- Typing welcome animation -->
+  <div class="typing-container">
+    <span class="typing-text" id="typingText"></span><span class="cursor"></span>
+  </div>
+
+  <!-- Intro paragraph -->
+  <p class="intro-text">
+    This page holds a story <em>written only for you</em> — woven from moments,
+    feelings, and everything left unsaid. Find a quiet place, let the world fade,
+    and allow yourself to simply be here.
+  </p>
+
+  <!-- CTA Button -->
+  <a href="story.html" class="btn-begin" id="beginBtn">
+    <span>Begin Reading</span>
+  </a>
+
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+  <p>Made with love · For Belinda · Always</p>
+</footer>
+
+<!-- ============================================
+     JAVASCRIPT
+============================================ -->
+<script>
+/* -----------------------------------------------
+   PARTICLE CANVAS — Floating Stars / Fireflies
+----------------------------------------------- */
+(function() {
+  const canvas = document.getElementById('starCanvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', () => { resize(); init(); });
+  resize();
+
+  /* Particle constructor */
+  function Particle() {
+    this.reset();
+  }
+  Particle.prototype.reset = function() {
+    this.x    = Math.random() * W;
+    this.y    = Math.random() * H;
+    this.r    = Math.random() * 1.8 + 0.4;
+    this.vx   = (Math.random() - 0.5) * 0.22;
+    this.vy   = (Math.random() - 0.5) * 0.18 - 0.05;
+    this.life = Math.random();          /* current opacity phase */
+    this.speed= Math.random() * 0.005 + 0.002;
+    this.hue  = 270 + Math.random() * 60;  /* violet to pink range */
+  };
+
+  function init() {
+    const count = Math.min(Math.floor((W * H) / 7000), 140);
+    particles = Array.from({length: count}, () => new Particle());
+  }
+  init();
+
+  /* Draw one frame */
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => {
+      p.life += p.speed;
+      const a = Math.abs(Math.sin(p.life)) * 0.65 + 0.05;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `hsla(${p.hue}, 80%, 75%, ${a})`;
+      ctx.fill();
+
+      /* Subtle glow for larger particles */
+      if (p.r > 1.2) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${p.hue}, 80%, 70%, ${a * 0.12})`;
+        ctx.fill();
+      }
+
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < -10 || p.x > W + 10 || p.y < -10 || p.y > H + 10) p.reset();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+
+/* -----------------------------------------------
+   TYPING ANIMATION
+----------------------------------------------- */
+(function() {
+  const el = document.getElementById('typingText');
+  const lines = [
+    "Welcome, beautiful soul…",
+    "I mean welcome BHAY 😁",
+    "This story was made for you.",
+    "You deserve every word of this.",
+  ];
+  let lineIdx = 0, charIdx = 0, deleting = false, paused = false;
+
+  function type() {
+    if (paused) { setTimeout(type, 1800); return; }
+
+    const current = lines[lineIdx];
+
+    if (!deleting) {
+      el.textContent = current.slice(0, ++charIdx);
+      if (charIdx === current.length) {
+        paused = true;
+        deleting = true;
+        setTimeout(() => { paused = false; type(); }, 2400);
+        return;
+      }
+      setTimeout(type, 65);
+    } else {
+      el.textContent = current.slice(0, --charIdx);
+      if (charIdx === 0) {
+        deleting = false;
+        lineIdx  = (lineIdx + 1) % lines.length;
+        setTimeout(type, 400);
+        return;
+      }
+      setTimeout(type, 35);
+    }
+  }
+
+  /* Start typing after initial fade-in delay */
+  setTimeout(type, 2000);
+})();
+
+
+/* -----------------------------------------------
+   SMOOTH PAGE TRANSITION on "Begin Reading"
+----------------------------------------------- */
+document.getElementById('beginBtn').addEventListener('click', function(e) {
+  e.preventDefault();
+  const overlay = document.getElementById('pageTransition');
+  overlay.classList.add('active');
+  setTimeout(() => { window.location.href = this.getAttribute('href'); }, 650);
+});
+
+
+/* -----------------------------------------------
+   THEME TOGGLE
+----------------------------------------------- */
+(function() {
+  const btn  = document.getElementById('themeToggle');
+  const body = document.body;
+  const saved = localStorage.getItem('storyTheme');
+  if (saved === 'light') { body.classList.add('light'); btn.textContent = '☽'; }
+
+  btn.addEventListener('click', () => {
+    body.classList.toggle('light');
+    const isLight = body.classList.contains('light');
+    btn.textContent = isLight ? '☽' : '☀';
+    localStorage.setItem('storyTheme', isLight ? 'light' : 'dark');
+  });
+})();
+
+
+/* -----------------------------------------------
+   MUSIC TOGGLE
+----------------------------------------------- */
+(function() {
+  const btn   = document.getElementById('musicToggle');
+  const audio = document.getElementById('bgMusic');
+  let playing = false;
+
+  btn.addEventListener('click', () => {
+    if (!playing) {
+      audio.play().catch(() => {
+        /* Silently fail if no source — user can add their own */
+      });
+      btn.textContent = '♫';
+      btn.style.color = 'var(--violet)';
+    } else {
+      audio.pause();
+      btn.textContent = '♪';
+      btn.style.color = '';
+    }
+    playing = !playing;
+  });
+})();
+
+
+/* -----------------------------------------------
+   FADE IN on page load (reverse transition)
+----------------------------------------------- */
+window.addEventListener('load', () => {
+  const overlay = document.getElementById('pageTransition');
+  overlay.style.opacity = '1';
+  overlay.style.pointerEvents = 'all';
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      overlay.style.transition = 'opacity 0.7s ease';
+      overlay.style.opacity = '0';
+      setTimeout(() => { overlay.style.pointerEvents = 'none'; }, 700);
+    });
+  });
+});
+</script>
+</body>
+</html>

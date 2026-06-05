@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thank You · For Belinda</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Cinzel:wght@400;500&family=Source+Sans+3:wght@300;400&display=swap" rel="stylesheet" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2218%22 fill=%22%230b0914%22/><text y=%22.9em%22 x=%2250%25%22 dominant-baseline=%22auto%22 text-anchor=%22middle%22 font-size=%2268%22 font-family=%22Georgia,serif%22 fill=%22%239b5de5%22>B</text></svg>" />
+  <style>
+    /* ============================================
+       VARIABLES
+    ============================================ */
+    :root {
+      --ink:      #0b0914;
+      --deep:     #100c1c;
+      --card:     rgba(22,15,40,0.7);
+      --border:   rgba(155,93,229,0.18);
+      --orchid:   #7b3fa0;
+      --violet:   #9b5de5;
+      --lavender: #c8a8f0;
+      --blush:    #f4a7c3;
+      --pearl:    #f3ecff;
+      --muted:    rgba(243,236,255,0.55);
+      --glow:     rgba(155,93,229,0.28);
+      --font-ser: 'Cormorant Garamond', Georgia, serif;
+      --font-ui:  'Cinzel', serif;
+      --font-san: 'Source Sans 3', sans-serif;
+    }
+    body.light {
+      --ink:    #f0ebff;
+      --deep:   #e6deff;
+      --card:   rgba(255,255,255,0.72);
+      --pearl:  #1a0d30;
+      --muted:  rgba(26,13,48,0.55);
+      --border: rgba(100,50,180,0.15);
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--ink);
+      color: var(--pearl);
+      font-family: var(--font-ser);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      transition: background 0.4s, color 0.4s;
+    }
+
+    /* ============================================
+       AMBIENT BACKGROUND
+    ============================================ */
+    .bg-glow {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 65% 55% at 10% 15%, rgba(80,25,130,0.32) 0%, transparent 65%),
+        radial-gradient(ellipse 55% 45% at 90% 80%, rgba(35,18,80,0.38) 0%, transparent 60%);
+    }
+
+    /* ============================================
+       FLOATING HEARTS CANVAS
+    ============================================ */
+    #heartsCanvas {
+      position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    }
+
+    /* ============================================
+       NAVBAR
+    ============================================ */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.75rem 1.4rem;
+      background: rgba(11,9,20,0.82);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    body.light .navbar { background: rgba(240,235,255,0.88); }
+
+    .nav-back {
+      font-family: var(--font-ui); font-size: 0.58rem; letter-spacing: 0.2em;
+      color: var(--lavender); text-decoration: none; opacity: 0.7; transition: opacity 0.2s;
+    }
+    .nav-back:hover { opacity: 1; }
+
+    .nav-title {
+      font-family: var(--font-ui); font-size: 0.65rem; letter-spacing: 0.2em;
+      color: var(--lavender); opacity: 0.5;
+    }
+
+    .icon-btn {
+      width: 34px; height: 34px; border-radius: 50%;
+      border: 1px solid var(--border); background: rgba(46,26,71,0.4);
+      color: var(--lavender); font-size: 0.85rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.25s;
+    }
+    .icon-btn:hover { border-color: var(--violet); box-shadow: 0 0 12px var(--glow); }
+    body.light .icon-btn { background: rgba(200,168,240,0.25); }
+
+    /* ============================================
+       MAIN CARD
+    ============================================ */
+    .main-wrap {
+      position: relative; z-index: 10;
+      width: 100%; max-width: 560px;
+      padding: 5.5rem 1.4rem 4rem;
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center; gap: 0;
+    }
+
+    /* Top label */
+    .top-label {
+      font-family: var(--font-ui); font-size: 0.58rem; letter-spacing: 0.35em;
+      color: var(--orchid); text-transform: uppercase; margin-bottom: 1.4rem;
+      opacity: 0; animation: fadeUp 0.8s ease forwards 0.3s;
+    }
+
+    /* Big emoji / icon */
+    .hero-icon {
+      font-size: 3.2rem; margin-bottom: 1.2rem;
+      opacity: 0; animation: fadeUp 0.8s ease forwards 0.5s;
+      filter: drop-shadow(0 0 18px rgba(155,93,229,0.35));
+    }
+
+    /* Main heading */
+    .main-heading {
+      font-family: var(--font-ui); font-size: clamp(1.8rem, 8vw, 2.8rem);
+      font-weight: 400; letter-spacing: 0.06em; line-height: 1.15;
+      background: linear-gradient(135deg, var(--lavender), var(--violet), var(--blush));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-bottom: 0.6rem;
+      opacity: 0; animation: fadeUp 0.9s ease forwards 0.7s;
+    }
+
+    .name-accent {
+      font-style: italic; display: block;
+      font-size: clamp(1rem, 4vw, 1.4rem);
+      color: var(--lavender); -webkit-text-fill-color: var(--lavender);
+      font-family: var(--font-ser); letter-spacing: 0.1em;
+      margin-bottom: 2rem;
+      opacity: 0; animation: fadeUp 0.9s ease forwards 0.9s;
+    }
+
+    /* Divider */
+    .deco-rule {
+      width: 50px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--orchid), transparent);
+      margin: 0 auto 2rem;
+      opacity: 0; animation: fadeUp 0.8s ease forwards 1s;
+    }
+
+    /* Message card */
+    .message-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      backdrop-filter: blur(12px);
+      padding: 2rem 1.8rem;
+      margin-bottom: 2.2rem;
+      text-align: left;
+      opacity: 0; animation: fadeUp 0.9s ease forwards 1.1s;
+    }
+    .message-card p {
+      font-size: clamp(0.95rem, 3vw, 1.05rem);
+      font-weight: 300; line-height: 1.95;
+      color: var(--muted);
+      margin-bottom: 1.1em;
+    }
+    .message-card p:last-child { margin-bottom: 0; }
+    .message-card em { color: var(--lavender); font-style: italic; }
+    .message-card strong { color: var(--pearl); font-weight: 400; }
+
+    /* ============================================
+       ACTION BUTTONS
+    ============================================ */
+    .actions {
+      display: flex; flex-direction: column;
+      gap: 0.85rem; width: 100%; max-width: 340px;
+      opacity: 0; animation: fadeUp 0.9s ease forwards 1.4s;
+    }
+
+    .btn {
+      display: flex; align-items: center; justify-content: center;
+      gap: 0.7rem; padding: 0.9rem 1.6rem;
+      border-radius: 6px; font-family: var(--font-san);
+      font-size: 0.88rem; font-weight: 400; letter-spacing: 0.04em;
+      text-decoration: none; cursor: pointer;
+      border: none; transition: all 0.3s ease;
+      width: 100%;
+    }
+    .btn-icon { font-size: 1.1rem; }
+
+    /* WhatsApp */
+    .btn-whatsapp {
+      background: #1a8a3a;
+      color: #fff;
+      box-shadow: 0 4px 18px rgba(26,138,58,0.3);
+    }
+    .btn-whatsapp:hover {
+      background: #1e9e42;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(26,138,58,0.4);
+    }
+
+    /* Call */
+    .btn-call {
+      background: rgba(155,93,229,0.15);
+      color: var(--lavender);
+      border: 1px solid rgba(155,93,229,0.35);
+    }
+    .btn-call:hover {
+      background: rgba(155,93,229,0.25);
+      border-color: var(--violet);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 22px var(--glow);
+    }
+
+    /* Back to story */
+    .btn-story {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      font-size: 0.82rem;
+    }
+    .btn-story:hover {
+      border-color: rgba(155,93,229,0.35);
+      color: var(--lavender);
+    }
+
+    /* ============================================
+       FOOTER SIGN-OFF
+    ============================================ */
+    .sign-off {
+      margin-top: 3rem;
+      opacity: 0; animation: fadeUp 0.9s ease forwards 1.8s;
+      text-align: center;
+    }
+    .sign-off p {
+      font-family: var(--font-ser); font-style: italic;
+      font-size: 0.85rem; color: rgba(200,168,240,0.3);
+      line-height: 1.7;
+    }
+    .sign-off .sig {
+      font-family: var(--font-ui); font-size: 0.55rem; letter-spacing: 0.25em;
+      color: rgba(200,168,240,0.2); text-transform: uppercase; margin-top: 0.4rem;
+    }
+
+    /* ============================================
+       ANIMATIONS
+    ============================================ */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============================================
+       PAGE TRANSITION
+    ============================================ */
+    .page-transition {
+      position: fixed; inset: 0; background: var(--ink);
+      z-index: 9999; pointer-events: none;
+      opacity: 0; transition: opacity 0.6s ease;
+    }
+    .page-transition.active { opacity: 1; pointer-events: all; }
+
+    /* ============================================
+       RESPONSIVE
+    ============================================ */
+    @media (max-width: 480px) {
+      .message-card { padding: 1.5rem 1.2rem; }
+      .main-wrap { padding-top: 5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-transition" id="pageTransition"></div>
+<div class="bg-glow"></div>
+<canvas id="heartsCanvas"></canvas>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a href="gallery.html" class="nav-back" id="backBtn">← Gallery</a>
+  <span class="nav-title">Thank You</span>
+  <button class="icon-btn" id="themeToggle" title="Toggle theme">☀</button>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="main-wrap">
+
+  <p class="top-label">End of the Story</p>
+  <div class="hero-icon">🎓</div>
+
+  <h1 class="main-heading">Thank You<br>for Reading</h1>
+  <span class="name-accent">._. Belinda 🤍</span>
+
+  <div class="deco-rule"></div>
+
+  <!-- Heartfelt message -->
+  <div class="message-card">
+    <p>
+      You made it to the end, and that means a lot. This story was written for
+      <em>you specifically</em> because you asked, and because you genuinely wanted to know.
+    </p>
+    <p>
+      Not everyone cares enough to ask about someone else's journey. The fact that you did
+      says a lot about the kind of person you are, Belinda.
+    </p>
+    <p>
+      <strong>Thank you for being a good friend.</strong> For the conversations, the laughter,
+      and for simply being someone worth sharing stories with.
+    </p>
+    <p>
+      Now you know how the internship went, every shaky lesson, every quiet victory,
+      and every moment that made it worth it. 😊
+    </p>
+  </div>
+
+  <!-- Action buttons -->
+  <div class="actions">
+    <!--
+      Replace the href numbers:
+      whatsapp: change 233XXXXXXXXX to your actual WhatsApp number (with country code, no +)
+      tel: change to your actual phone number
+    -->
+    <a href="https://wa.me/233508591872?text=Hi!%20I%20just%20finished%20reading%20your%20story%20%F0%9F%98%8A"
+       class="btn btn-whatsapp" target="_blank" rel="noopener">
+      <span class="btn-icon">💬</span>
+      <span>Say Hi on WhatsApp</span>
+    </a>
+
+    <a href="tel:+233508591872" class="btn btn-call">
+      <span class="btn-icon">📞</span>
+      <span>Give Me a Call</span>
+    </a>
+
+    <a href="story.html" class="btn btn-story" id="storyBtn">
+      <span class="btn-icon">↩</span>
+      <span>Back to the Story</span>
+    </a>
+  </div>
+
+  <!-- Sign-off -->
+  <div class="sign-off">
+    <p>Every story has an ending.<br>But good friendships don't.</p>
+    <p class="sig">Made with sincerity · For Belinda · Always</p>
+  </div>
+
+</div>
+
+<!-- ============================================
+     JAVASCRIPT
+============================================ -->
+<script>
+/* ------------------------------------------------
+   FLOATING HEARTS ANIMATION
+------------------------------------------------ */
+(function() {
+  const canvas = document.getElementById('heartsCanvas');
+  const ctx    = canvas.getContext('2d');
+  let W, H, hearts = [];
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', () => { resize(); });
+  resize();
+
+  /* Draw a heart shape at (x, y) with given size */
+  function drawHeart(x, y, size, alpha, color) {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle   = color;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.bezierCurveTo(x, y - size * 0.3, x - size * 0.5, y - size * 0.7, x - size * 0.5, y - size * 0.4);
+    ctx.bezierCurveTo(x - size * 0.5, y - size * 0.9, x + size * 0.1, y - size * 0.9, x, y - size * 0.55);
+    ctx.bezierCurveTo(x - size * 0.1, y - size * 0.9, x + size * 0.5, y - size * 0.9, x + size * 0.5, y - size * 0.4);
+    ctx.bezierCurveTo(x + size * 0.5, y - size * 0.7, x, y - size * 0.3, x, y);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function Heart() { this.reset(); }
+  Heart.prototype.reset = function() {
+    this.x     = Math.random() * W;
+    this.y     = H + 30;
+    this.size  = Math.random() * 14 + 6;
+    this.vy    = -(Math.random() * 0.8 + 0.4);
+    this.vx    = (Math.random() - 0.5) * 0.5;
+    this.life  = 0;
+    this.maxLife = Math.random() * 200 + 150;
+    const hue  = 270 + Math.random() * 70;
+    this.color = `hsl(${hue}, 75%, 72%)`;
+  };
+
+  /* Spawn hearts gradually */
+  const MAX_HEARTS = 18;
+  for (let i = 0; i < MAX_HEARTS; i++) {
+    const h = new Heart();
+    h.y    = Math.random() * H; /* spread initial positions */
+    h.life = Math.floor(Math.random() * h.maxLife);
+    hearts.push(h);
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, W, H);
+    hearts.forEach(h => {
+      h.life++;
+      h.x += h.vx + Math.sin(h.life * 0.04) * 0.4;
+      h.y += h.vy;
+      /* Fade in and out */
+      const progress = h.life / h.maxLife;
+      const alpha    = progress < 0.2 ? progress / 0.2 : progress > 0.8 ? (1 - progress) / 0.2 : 1;
+      drawHeart(h.x, h.y, h.size, alpha * 0.28, h.color);
+      if (h.life >= h.maxLife || h.y < -40) h.reset();
+    });
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+/* ------------------------------------------------
+   THEME TOGGLE
+------------------------------------------------ */
+(function() {
+  const btn  = document.getElementById('themeToggle');
+  const body = document.body;
+  const saved = localStorage.getItem('storyTheme');
+  if (saved === 'light') { body.classList.add('light'); btn.textContent = '☽'; }
+  btn.addEventListener('click', () => {
+    body.classList.toggle('light');
+    const isLight = body.classList.contains('light');
+    btn.textContent = isLight ? '☽' : '☀';
+    localStorage.setItem('storyTheme', isLight ? 'light' : 'dark');
+  });
+})();
+
+/* ------------------------------------------------
+   SMOOTH PAGE TRANSITIONS
+------------------------------------------------ */
+function goTo(href) {
+  const overlay = document.getElementById('pageTransition');
+  overlay.classList.add('active');
+  setTimeout(() => { window.location.href = href; }, 650);
+}
+
+document.getElementById('backBtn').addEventListener('click',  e => { e.preventDefault(); goTo(e.target.getAttribute('href')); });
+document.getElementById('storyBtn').addEventListener('click', e => { e.preventDefault(); goTo(e.target.getAttribute('href')); });
+
+/* Fade in on load */
+window.addEventListener('load', () => {
+  const overlay = document.getElementById('pageTransition');
+  overlay.style.opacity = '1';
+  overlay.style.pointerEvents = 'all';
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    overlay.style.transition = 'opacity 0.7s ease';
+    overlay.style.opacity    = '0';
+    setTimeout(() => { overlay.style.pointerEvents = 'none'; }, 700);
+  }));
+});
+</script>
+</body>
+</html>

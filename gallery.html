@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gallery · For Belinda</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Cinzel:wght@400;500&family=Source+Sans+3:wght@300;400&display=swap" rel="stylesheet" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2218%22 fill=%22%230b0914%22/><text y=%22.9em%22 x=%2250%25%22 dominant-baseline=%22auto%22 text-anchor=%22middle%22 font-size=%2268%22 font-family=%22Georgia,serif%22 fill=%22%239b5de5%22>B</text></svg>" />
+  <style>
+    /* ============================================
+       VARIABLES
+    ============================================ */
+    :root {
+      --ink:      #0b0914;
+      --deep:     #100c1c;
+      --card:     rgba(22,15,40,0.75);
+      --border:   rgba(155,93,229,0.18);
+      --orchid:   #7b3fa0;
+      --violet:   #9b5de5;
+      --lavender: #c8a8f0;
+      --blush:    #f4a7c3;
+      --gold:     #f0d080;
+      --pearl:    #f3ecff;
+      --muted:    rgba(243,236,255,0.5);
+      --glow:     rgba(155,93,229,0.3);
+      --font-ser: 'Cormorant Garamond', Georgia, serif;
+      --font-ui:  'Cinzel', serif;
+      --font-san: 'Source Sans 3', sans-serif;
+    }
+
+    body.light {
+      --ink:    #f0ebff;
+      --deep:   #e6deff;
+      --card:   rgba(255,255,255,0.75);
+      --pearl:  #1a0d30;
+      --muted:  rgba(26,13,48,0.55);
+      --border: rgba(100,50,180,0.15);
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--ink);
+      color: var(--pearl);
+      font-family: var(--font-ser);
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background 0.4s, color 0.4s;
+      /* Disable text selection sitewide */
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* ============================================
+       AMBIENT BACKGROUND
+    ============================================ */
+    .bg-glow {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 50% at 15% 20%, rgba(90,30,140,0.35) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 85% 75%, rgba(40,20,90,0.40) 0%, transparent 60%);
+      animation: bgShift 16s ease-in-out infinite alternate;
+    }
+    @keyframes bgShift {
+      from { opacity: 0.7; }
+      to   { opacity: 1; }
+    }
+
+    /* ============================================
+       NAVBAR
+    ============================================ */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1.4rem;
+      background: rgba(11,9,20,0.82);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    body.light .navbar { background: rgba(240,235,255,0.88); }
+
+    .nav-back {
+      font-family: var(--font-ui);
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      color: var(--lavender);
+      text-decoration: none;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    .nav-back:hover { opacity: 1; }
+
+    .nav-title {
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--lavender);
+      opacity: 0.5;
+    }
+
+    .nav-right { display: flex; gap: 0.5rem; }
+    .icon-btn {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: rgba(46,26,71,0.4);
+      color: var(--lavender);
+      font-size: 0.85rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    .icon-btn:hover { border-color: var(--violet); box-shadow: 0 0 12px var(--glow); }
+    body.light .icon-btn { background: rgba(200,168,240,0.25); }
+
+    /* ============================================
+       PAGE HEADER
+    ============================================ */
+    .page-header {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 6.5rem 1.5rem 2.5rem;
+    }
+    .page-label {
+      font-family: var(--font-ui);
+      font-size: 0.58rem;
+      letter-spacing: 0.35em;
+      color: var(--orchid);
+      text-transform: uppercase;
+      margin-bottom: 0.9rem;
+      opacity: 0.85;
+    }
+    .page-title {
+      font-family: var(--font-ui);
+      font-size: clamp(1.6rem, 7vw, 2.8rem);
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      background: linear-gradient(135deg, var(--lavender), var(--violet), var(--blush));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+      margin-bottom: 0.8rem;
+    }
+    .page-sub {
+      font-family: var(--font-ser);
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--muted);
+    }
+    .deco-rule {
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--orchid), transparent);
+      margin: 1.5rem auto 0;
+    }
+
+    /* ============================================
+       GALLERY GRID
+    ============================================ */
+    .gallery-grid {
+      position: relative;
+      z-index: 10;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.2rem;
+      padding: 1.5rem 1.4rem 6rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* ============================================
+       GALLERY CARD
+    ============================================ */
+    .gallery-card {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--card);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+      transition: transform 0.38s cubic-bezier(0.34,1.56,0.64,1),
+                  box-shadow 0.38s ease,
+                  border-color 0.3s;
+      animation: cardIn 0.6s ease both;
+    }
+    .gallery-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 30px var(--glow);
+      border-color: rgba(155,93,229,0.45);
+    }
+    /* Stagger entrance animations */
+    .gallery-card:nth-child(1)  { animation-delay: 0.05s; }
+    .gallery-card:nth-child(2)  { animation-delay: 0.12s; }
+    .gallery-card:nth-child(3)  { animation-delay: 0.19s; }
+    .gallery-card:nth-child(4)  { animation-delay: 0.26s; }
+    .gallery-card:nth-child(5)  { animation-delay: 0.33s; }
+    .gallery-card:nth-child(6)  { animation-delay: 0.40s; }
+    .gallery-card:nth-child(7)  { animation-delay: 0.47s; }
+    .gallery-card:nth-child(8)  { animation-delay: 0.54s; }
+    .gallery-card:nth-child(9)  { animation-delay: 0.61s; }
+    .gallery-card:nth-child(10) { animation-delay: 0.68s; }
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(28px) scale(0.96); }
+      to   { opacity: 1; transform: translateY(0)   scale(1); }
+    }
+
+    /* Image wrapper — protection layer sits on top */
+    .card-img-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      background: rgba(30,15,50,0.6);
+    }
+    .card-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+      /* Prevent drag */
+      pointer-events: none;
+      -webkit-user-drag: none;
+    }
+    .gallery-card:hover .card-img-wrap img { transform: scale(1.07); }
+
+    /* Invisible protection overlay — blocks right-click, screenshot gestures */
+    .img-shield {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      background: transparent;
+      cursor: pointer;
+      /* Blocks touch-hold context menu on mobile */
+      -webkit-touch-callout: none;
+    }
+
+    /* Hover overlay with caption preview */
+    .card-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 6;
+      background: linear-gradient(to top, rgba(10,5,20,0.85) 0%, rgba(10,5,20,0.1) 55%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      display: flex;
+      align-items: flex-end;
+      padding: 1rem;
+    }
+    .gallery-card:hover .card-overlay { opacity: 1; }
+
+    .overlay-content {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .overlay-icon {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: rgba(155,93,229,0.3);
+      border: 1px solid rgba(155,93,229,0.5);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem;
+      flex-shrink: 0;
+    }
+    .overlay-text {
+      font-family: var(--font-san);
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.8);
+      letter-spacing: 0.03em;
+    }
+
+    /* Card caption below image */
+    .card-caption {
+      padding: 0.75rem 1rem;
+      border-top: 1px solid var(--border);
+    }
+    .caption-num {
+      font-family: var(--font-ui);
+      font-size: 0.5rem;
+      letter-spacing: 0.25em;
+      color: var(--orchid);
+      margin-bottom: 0.2rem;
+    }
+    .caption-text {
+      font-family: var(--font-ser);
+      font-size: 0.85rem;
+      font-style: italic;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ============================================
+       LIGHTBOX
+    ============================================ */
+    #lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(5,3,12,0.94);
+      backdrop-filter: blur(18px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    #lightbox.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .lb-inner {
+      position: relative;
+      max-width: min(88vw, 820px);
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    /* Image container with protection */
+    .lb-img-wrap {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(155,93,229,0.25);
+      box-shadow: 0 20px 80px rgba(0,0,0,0.6), 0 0 60px rgba(155,93,229,0.12);
+    }
+    .lb-img-wrap img {
+      display: block;
+      max-width: min(88vw, 820px);
+      max-height: 72vh;
+      object-fit: contain;
+      pointer-events: none;
+      -webkit-user-drag: none;
+      /* CSS filter trick to deter screenshots: subtle overlay */
+    }
+    /* Shield blocks right-click on lightbox image */
+    .lb-shield {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      cursor: default;
+      -webkit-touch-callout: none;
+    }
+
+    /* Watermark */
+    .lb-watermark {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      opacity: 0.07;
+      font-family: var(--font-ui);
+      font-size: clamp(1.5rem, 5vw, 3rem);
+      letter-spacing: 0.15em;
+      color: #fff;
+      transform: rotate(-25deg);
+      white-space: nowrap;
+    }
+
+    .lb-caption {
+      text-align: center;
+    }
+    .lb-caption-num {
+      font-family: var(--font-ui);
+      font-size: 0.55rem;
+      letter-spacing: 0.3em;
+      color: var(--orchid);
+      margin-bottom: 0.3rem;
+    }
+    .lb-caption-text {
+      font-family: var(--font-ser);
+      font-size: 1rem;
+      font-style: italic;
+      color: rgba(243,236,255,0.75);
+    }
+    .lb-counter {
+      font-family: var(--font-san);
+      font-size: 0.7rem;
+      color: var(--lavender);
+      opacity: 0.5;
+      margin-top: 0.2rem;
+    }
+
+    /* Nav arrows */
+    .lb-prev, .lb-next {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 600;
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      border: 1px solid rgba(155,93,229,0.35);
+      background: rgba(20,12,36,0.75);
+      backdrop-filter: blur(8px);
+      color: var(--lavender);
+      font-size: 1.1rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    .lb-prev { left: 0.8rem; }
+    .lb-next { right: 0.8rem; }
+    .lb-prev:hover, .lb-next:hover {
+      background: rgba(155,93,229,0.25);
+      border-color: var(--violet);
+      box-shadow: 0 0 20px var(--glow);
+      color: #fff;
+    }
+
+    /* Close button */
+    .lb-close {
+      position: fixed;
+      top: 1rem; right: 1rem;
+      z-index: 600;
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      border: 1px solid rgba(155,93,229,0.3);
+      background: rgba(20,12,36,0.8);
+      backdrop-filter: blur(8px);
+      color: var(--lavender);
+      font-size: 1.2rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    .lb-close:hover { border-color: var(--blush); color: var(--blush); }
+
+    /* ============================================
+       FOOTER NAV
+    ============================================ */
+    .page-footer {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 1.5rem 1rem 3rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+    .btn-next {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.85rem 2.2rem;
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-decoration: none;
+      border-radius: 3px;
+      background: linear-gradient(135deg, var(--orchid), var(--violet));
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 20px var(--glow);
+    }
+    .btn-next:hover { transform: translateY(-2px); box-shadow: 0 8px 30px var(--glow); }
+    .footer-note {
+      font-family: var(--font-ui);
+      font-size: 0.5rem;
+      letter-spacing: 0.2em;
+      color: rgba(200,168,240,0.22);
+      text-transform: uppercase;
+    }
+
+    /* ============================================
+       PAGE TRANSITION
+    ============================================ */
+    .page-transition {
+      position: fixed; inset:0;
+      background: var(--ink);
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    .page-transition.active { opacity:1; pointer-events: all; }
+
+    /* ============================================
+       RESPONSIVE
+    ============================================ */
+    @media (max-width: 600px) {
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; padding: 1rem 0.9rem 6rem; }
+      .lb-prev { left: 0.3rem; }
+      .lb-next { right: 0.3rem; }
+      .lb-prev, .lb-next { width: 38px; height: 38px; font-size: 0.9rem; }
+    }
+    @media (max-width: 380px) {
+      .gallery-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Page transition overlay -->
+<div class="page-transition" id="pageTransition"></div>
+
+<!-- Ambient glow -->
+<div class="bg-glow"></div>
+
+<!-- ============================================
+     NAVBAR
+============================================ -->
+<nav class="navbar">
+  <a href="story.html" class="nav-back" id="backBtn">← Story</a>
+  <span class="nav-title">Gallery</span>
+  <div class="nav-right">
+    <button class="icon-btn" id="themeToggle" title="Toggle theme">☀</button>
+  </div>
+</nav>
+
+<!-- ============================================
+     PAGE HEADER
+============================================ -->
+<header class="page-header">
+  <p class="page-label">A Visual Chapter</p>
+  <h1 class="page-title">Our Gallery</h1>
+  <p class="page-sub">Moments worth keeping — just for you, Belinda 🤍</p>
+  <div class="deco-rule"></div>
+</header>
+
+<!-- ============================================
+     GALLERY GRID
+     Replace photo1.jpg … photo10.jpg with your
+     actual image filenames. Update captions too.
+============================================ -->
+<main class="gallery-grid" id="galleryGrid">
+
+  <div class="gallery-card" data-index="0">
+    <div class="card-img-wrap">
+      <img src="photo1.jpg" alt="Memory 1" loading="lazy" />
+      <div class="img-shield"></div>
+      <div class="card-overlay">
+        <div class="overlay-content">
+          <div class="overlay-icon">🔍</div>
+          <span class="overlay-text">View photo</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-caption">
+      <p class="caption-num">01 / 10</p>
+      <p class="caption-text">The beginning of something beautiful</p>
+    </div>
+  </div>
+
+  <div class="gallery-card" data-index="1">
+    <div class="card-img-wrap">
+      <img src="photo2.jpg" alt="Memory 2" loading="lazy" />
+      <div class="img-shield"></div>
+      <div class="card-overlay">
+        <div class="overlay-content">
+          <div class="overlay-icon">🔍</div>
+          <span class="overlay-text">View photo</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-caption">
+      <p class="caption-num">02 / 10</p>
+      <p class="caption-text">A moment I always come back to</p>
+    </div>
+  </div>
+
+  <div class="gallery-card" data-index="2">
+    <div class="card-img-wrap">
+      <img src="photo3.jpg" alt="Memory 3" loading="lazy" />
+      <div class="img-shield"></div>
+      <div class="card-overlay">
+        <div class="overlay-content">
+          <div class="overlay-icon">🔍</div>
+          <span class="overlay-text">View photo</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-caption">
+      <p class="caption-num">03 / 10</p>
+      <p class="caption-text">You wouldn't believe this was real</p>
+    </div>
+  </div>
+
+  <div class="gallery-card" data-index="3">
+    <div class="card-img-wrap">
+      <img src="photo4.jpg" alt="Memory 4" loading="lazy" />
+      <div class="img-shield"></div>
+      <div class="card-overlay">
+        <div class="overlay-content">
+          <div class="overlay-icon">🔍</div>
+          <span class="overlay-text">View photo</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-caption">
+      <p class="caption-num">04 / 10</p>
+      <p class="caption-text">Ghanata SHS — where it all unfolded</p>
+    </div>
+  </div>
+
+  <div class="gallery-card" data-index="4">
+    <div class="card-img-wrap">
+      <img src="photo5.jpg" alt="Memory 5" loading="lazy" />
+      <div class="img-shield"></div>
+      <div class="card-overlay">
+        <div class="overlay-content">
+          <div class="overlay-icon">🔍</div>
+          <span class="overlay-text">View photo</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-caption">
+      <p class="caption-num">05 / 10</p>
+      <p class="caption-text">Calm on the outside. Panicking within 😂</p>
+    </div>
+  </div>
+
+  <div class="gallery-card" data-index="5">
+    <div class="card-img-wrap">
+      <img src="photo6.jpg" alt="Memory 6" loading="lazy" />
+      <div class="img-shield"></div>
+      <div class="card-overlay">
+        <div class="overlay-content">
+          <div class="overlay-icon">🔍</div>
+          <span class="overlay-text">View photo</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-caption">
+      <p class="caption-num">06 / 10</p>
+      <p class="caption-text">The friendly smile that won them over</p>
+    </div>
+  </div>
+
+  <div class="gallery-card" data-index="6">
+    <div class="card-img-wrap">
+      <img src="photo7.jpg" alt="Memory 7" loading="lazy" />
+      <div class="img-shield"></div>
+      <div class="card-overlay">
+        <div class="overlay-content">
+          <div class="overlay-icon">🔍</div>
+          <span class="overlay-text">View photo</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-caption">
+      <p class="caption-num">07 / 10</p>
+      <p class="caption-text">This one holds a memory only we know</p>
+    </div>
+  </div>
+
+  <div class="gallery-card" data-index="7">
+    <div class="card-img-wrap">
+      <img src="photo8.jpg" alt="Memory 8" loading="lazy" />
+      <div class="img-shield"></div>
+      <div class="card-overlay">
+        <div class="overlay-content">
+          <div class="overlay-icon">🔍</div>
+          <span class="overlay-text">View photo</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-caption">
+      <p class="caption-num">08 / 10</p>
+      <p class="caption-text">The goodbye that said everything</p>
+    </div>
+  </div>
+
+  <div class="gallery-card" data-index="8">
+    <div class="card-img-wrap">
+      <img src="photo9.jpg" alt="Memory 9" loading="lazy" />
+      <div class="img-shield"></div>
+      <div class="card-overlay">
+        <div class="overlay-content">
+          <div class="overlay-icon">🔍</div>
+          <span class="overlay-text">View photo</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-caption">
+      <p class="caption-num">09 / 10</p>
+      <p class="caption-text">Growth looks exactly like this</p>
+    </div>
+  </div>
+
+  <div class="gallery-card" data-index="9">
+    <div class="card-img-wrap">
+      <img src="photo10.jpg" alt="Memory 10" loading="lazy" />
+      <div class="img-shield"></div>
+      <div class="card-overlay">
+        <div class="overlay-content">
+          <div class="overlay-icon">🔍</div>
+          <span class="overlay-text">View photo</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-caption">
+      <p class="caption-num">10 / 10</p>
+      <p class="caption-text">And so the chapter closes, beautifully ❤️</p>
+    </div>
+  </div>
+
+</main>
+
+<!-- Footer nav -->
+<div class="page-footer">
+  <a href="contact.html" class="btn-next" id="contactBtn">A Message For You 💌 →</a>
+  <p class="footer-note">For Belinda · Always</p>
+</div>
+
+<!-- ============================================
+     LIGHTBOX
+============================================ -->
+<div id="lightbox">
+  <button class="lb-close" id="lbClose">✕</button>
+  <button class="lb-prev" id="lbPrev">‹</button>
+  <button class="lb-next" id="lbNext">›</button>
+
+  <div class="lb-inner">
+    <div class="lb-img-wrap">
+      <img id="lbImg" src="" alt="" />
+      <div class="lb-shield"></div>
+      <div class="lb-watermark" id="lbWatermark">For Belinda</div>
+    </div>
+    <div class="lb-caption">
+      <p class="lb-caption-num" id="lbNum"></p>
+      <p class="lb-caption-text" id="lbCaption"></p>
+      <p class="lb-counter" id="lbCounter"></p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     JAVASCRIPT
+============================================ -->
+<script>
+/* ------------------------------------------------
+   IMAGE / CAPTION DATA
+   Update src to your actual filenames.
+   Captions match the cards above.
+------------------------------------------------ */
+const PHOTOS = [
+  { src: 'photo1.jpg',  caption: 'The beginning of something beautiful' },
+  { src: 'photo2.jpg',  caption: 'A moment I always come back to' },
+  { src: 'photo3.jpg',  caption: "You wouldn't believe this was real" },
+  { src: 'photo4.jpg',  caption: 'Ghanata SHS — where it all unfolded' },
+  { src: 'photo5.jpg',  caption: 'Calm on the outside. Panicking within 😂' },
+  { src: 'photo6.jpg',  caption: 'The friendly smile that won them over' },
+  { src: 'photo7.jpg',  caption: 'This one holds a memory only we know' },
+  { src: 'photo8.jpg',  caption: 'The goodbye that said everything' },
+  { src: 'photo9.jpg',  caption: 'Growth looks exactly like this' },
+  { src: 'photo10.jpg', caption: 'And so the chapter closes, beautifully ❤️' },
+];
+
+let currentIndex = 0;
+
+/* ---- LIGHTBOX OPEN ---- */
+function openLightbox(idx) {
+  currentIndex = idx;
+  updateLightbox();
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function updateLightbox() {
+  const p   = PHOTOS[currentIndex];
+  const img = document.getElementById('lbImg');
+  /* Fade effect on image change */
+  img.style.opacity = '0';
+  img.style.transition = 'opacity 0.25s';
+  setTimeout(() => {
+    img.src = p.src;
+    img.alt = p.caption;
+    img.onload = () => { img.style.opacity = '1'; };
+    /* If cached, force show */
+    if (img.complete) img.style.opacity = '1';
+  }, 200);
+
+  document.getElementById('lbCaption').textContent = p.caption;
+  document.getElementById('lbNum').textContent      = `0${currentIndex + 1} / ${PHOTOS.length}`;
+  document.getElementById('lbCounter').textContent  = `${currentIndex + 1} of ${PHOTOS.length}`;
+}
+
+/* ---- LIGHTBOX CLOSE ---- */
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ---- PREV / NEXT ---- */
+function prevPhoto() {
+  currentIndex = (currentIndex - 1 + PHOTOS.length) % PHOTOS.length;
+  updateLightbox();
+}
+function nextPhoto() {
+  currentIndex = (currentIndex + 1) % PHOTOS.length;
+  updateLightbox();
+}
+
+/* ---- CARD CLICK LISTENERS ---- */
+document.querySelectorAll('.gallery-card').forEach(card => {
+  card.addEventListener('click', () => {
+    openLightbox(parseInt(card.dataset.index));
+  });
+});
+
+document.getElementById('lbClose').addEventListener('click', closeLightbox);
+document.getElementById('lbPrev').addEventListener('click', prevPhoto);
+document.getElementById('lbNext').addEventListener('click', nextPhoto);
+
+/* Click outside image to close */
+document.getElementById('lightbox').addEventListener('click', function(e) {
+  if (e.target === this) closeLightbox();
+});
+
+/* Keyboard navigation */
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('lightbox').classList.contains('open')) return;
+  if (e.key === 'ArrowLeft')  prevPhoto();
+  if (e.key === 'ArrowRight') nextPhoto();
+  if (e.key === 'Escape')     closeLightbox();
+});
+
+/* ------------------------------------------------
+   MOBILE SWIPE SUPPORT
+------------------------------------------------ */
+let touchStartX = 0, touchStartY = 0;
+
+document.getElementById('lightbox').addEventListener('touchstart', e => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
+
+document.getElementById('lightbox').addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = e.changedTouches[0].clientY - touchStartY;
+  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+    if (dx < 0) nextPhoto(); else prevPhoto();
+  }
+}, { passive: true });
+
+/* ------------------------------------------------
+   IMAGE PROTECTION
+   Block right-click, drag, long-press, and
+   the default context menu on all images.
+------------------------------------------------ */
+function blockImageActions(e) { e.preventDefault(); return false; }
+
+/* Disable right-click everywhere */
+document.addEventListener('contextmenu', blockImageActions);
+
+/* Disable drag on all images */
+document.querySelectorAll('img').forEach(img => {
+  img.addEventListener('dragstart',    blockImageActions);
+  img.addEventListener('contextmenu',  blockImageActions);
+});
+
+/* Disable long-press selection on mobile */
+document.addEventListener('selectstart', blockImageActions);
+document.addEventListener('touchstart', function(e) {
+  /* Only block if touching an image or shield */
+  if (e.target.tagName === 'IMG' || e.target.classList.contains('img-shield') || e.target.classList.contains('lb-shield')) {
+    /* Allow the event but prevent hold-to-save on iOS */
+  }
+}, { passive: true });
+
+/* iOS: prevent callout (save image popup) */
+document.querySelectorAll('img, .img-shield, .lb-shield').forEach(el => {
+  el.style.webkitTouchCallout = 'none';
+  el.style.webkitUserSelect   = 'none';
+});
+
+/* Prevent keyboard shortcut save (Ctrl+S) */
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S' || e.key === 'u' || e.key === 'U')) {
+    e.preventDefault();
+  }
+});
+
+/* ------------------------------------------------
+   THEME TOGGLE
+------------------------------------------------ */
+(function() {
+  const btn  = document.getElementById('themeToggle');
+  const body = document.body;
+  const saved = localStorage.getItem('storyTheme');
+  if (saved === 'light') { body.classList.add('light'); btn.textContent = '☽'; }
+  btn.addEventListener('click', () => {
+    body.classList.toggle('light');
+    const isLight = body.classList.contains('light');
+    btn.textContent = isLight ? '☽' : '☀';
+    localStorage.setItem('storyTheme', isLight ? 'light' : 'dark');
+  });
+})();
+
+/* ------------------------------------------------
+   SMOOTH PAGE TRANSITIONS
+------------------------------------------------ */
+function goTo(href) {
+  const overlay = document.getElementById('pageTransition');
+  overlay.classList.add('active');
+  setTimeout(() => { window.location.href = href; }, 650);
+}
+
+document.getElementById('backBtn').addEventListener('click',    e => { e.preventDefault(); goTo(e.target.getAttribute('href')); });
+document.getElementById('contactBtn').addEventListener('click', e => { e.preventDefault(); goTo(e.target.getAttribute('href')); });
+
+/* Fade in on load */
+window.addEventListener('load', () => {
+  const overlay = document.getElementById('pageTransition');
+  overlay.style.opacity = '1';
+  overlay.style.pointerEvents = 'all';
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    overlay.style.transition = 'opacity 0.7s ease';
+    overlay.style.opacity    = '0';
+    setTimeout(() => { overlay.style.pointerEvents = 'none'; }, 700);
+  }));
+});
+</script>
+</body>
+</html>

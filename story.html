@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Story · For Belinda</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=Cinzel:wght@400;500&family=Source+Sans+3:wght@300;400&display=swap" rel="stylesheet" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2218%22 fill=%22%230b0914%22/><text y=%22.9em%22 x=%2250%25%22 dominant-baseline=%22auto%22 text-anchor=%22middle%22 font-size=%2268%22 font-family=%22Georgia,serif%22 fill=%22%239b5de5%22>B</text></svg>" />
+  <style>
+    /* ============================================
+       CSS VARIABLES
+    ============================================ */
+    :root {
+      --ink:       #0b0914;
+      --deep:      #100c1c;
+      --card:      #15102a;
+      --border:    rgba(155,93,229,0.18);
+      --orchid:    #7b3fa0;
+      --violet:    #9b5de5;
+      --lavender:  #c8a8f0;
+      --blush:     #f4a7c3;
+      --gold:      #f0d080;
+      --pearl:     #f3ecff;
+      --muted:     rgba(243,236,255,0.55);
+      --glow:      rgba(155,93,229,0.3);
+      --font-read: 'Lora', Georgia, serif;
+      --font-ui:   'Cinzel', serif;
+      --font-sans: 'Source Sans 3', sans-serif;
+      --progress-h: 3px;
+    }
+
+    /* Light mode */
+    body.light {
+      --ink:    #f0ebff;
+      --deep:   #e8deff;
+      --card:   #fff;
+      --border: rgba(100,50,180,0.15);
+      --pearl:  #1a0d30;
+      --muted:  rgba(26,13,48,0.55);
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--ink);
+      color: var(--pearl);
+      font-family: var(--font-read);
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background 0.4s, color 0.4s;
+    }
+
+    /* ============================================
+       READING PROGRESS BAR (top of page)
+    ============================================ */
+    #progressBar {
+      position: fixed;
+      top: 0; left: 0;
+      height: var(--progress-h);
+      width: 0%;
+      background: linear-gradient(90deg, var(--orchid), var(--violet), var(--blush));
+      z-index: 200;
+      transition: width 0.2s linear;
+      box-shadow: 0 0 10px var(--glow);
+    }
+
+    /* ============================================
+       FIXED TOP NAVBAR
+    ============================================ */
+    .navbar {
+      position: fixed;
+      top: var(--progress-h);
+      left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1.2rem;
+      background: rgba(11,9,20,0.82);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      gap: 0.5rem;
+    }
+    body.light .navbar { background: rgba(240,235,255,0.88); }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-shrink: 0;
+    }
+    .nav-back {
+      font-family: var(--font-ui);
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      color: var(--lavender);
+      text-decoration: none;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    .nav-back:hover { opacity: 1; }
+
+    .nav-title {
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--lavender);
+      opacity: 0.55;
+      flex: 1;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-shrink: 0;
+    }
+
+    /* Small icon buttons */
+    .icon-btn {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: rgba(46,26,71,0.4);
+      color: var(--lavender);
+      font-size: 0.85rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s;
+      flex-shrink: 0;
+    }
+    .icon-btn:hover {
+      border-color: var(--violet);
+      box-shadow: 0 0 12px var(--glow);
+      color: var(--pearl);
+    }
+    body.light .icon-btn { background: rgba(200,168,240,0.25); }
+
+    /* ============================================
+       READING META BAR (below nav)
+    ============================================ */
+    .meta-bar {
+      position: fixed;
+      top: calc(var(--progress-h) + 52px);
+      left: 0; right: 0;
+      z-index: 99;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.4rem 1.4rem;
+      background: rgba(11,9,20,0.65);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(155,93,229,0.08);
+      font-family: var(--font-sans);
+      font-size: 0.68rem;
+      color: rgba(200,168,240,0.5);
+      letter-spacing: 0.06em;
+    }
+    body.light .meta-bar { background: rgba(240,235,255,0.75); color: rgba(100,60,180,0.6); }
+    .meta-bar span { display: flex; align-items: center; gap: 0.3rem; }
+
+    /* ============================================
+       STORY CONTAINER
+    ============================================ */
+    .story-outer {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 116px 1.4rem 6rem;
+    }
+
+    /* Chapter header */
+    .story-header {
+      text-align: center;
+      margin-bottom: 3.5rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .story-label {
+      font-family: var(--font-ui);
+      font-size: 0.58rem;
+      letter-spacing: 0.35em;
+      color: var(--orchid);
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+      opacity: 0.8;
+    }
+    .story-title {
+      font-family: var(--font-ui);
+      font-size: clamp(1.5rem, 6vw, 2.6rem);
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      background: linear-gradient(135deg, var(--lavender), var(--violet), var(--blush));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+      margin-bottom: 0.8rem;
+    }
+    .story-subtitle {
+      font-size: 0.88rem;
+      font-style: italic;
+      color: var(--muted);
+    }
+
+    /* ============================================
+       TYPEWRITER OUTPUT AREA
+    ============================================ */
+    #storyOutput {
+      font-family: var(--font-read);
+      font-size: clamp(1rem, 3.5vw, 1.13rem);
+      line-height: 2;
+      color: var(--pearl);
+      letter-spacing: 0.01em;
+    }
+
+    /* Each paragraph rendered by JS */
+    #storyOutput p {
+      margin-bottom: 1.8em;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    #storyOutput p.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Inline typing cursor */
+    .type-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.05em;
+      background: var(--violet);
+      margin-left: 2px;
+      vertical-align: middle;
+      animation: blink 0.85s step-end infinite;
+    }
+    @keyframes blink {
+      0%,100% { opacity:1; }
+      50%      { opacity:0; }
+    }
+
+    /* Highlighted dates / emphasis */
+    #storyOutput .hl {
+      color: var(--lavender);
+      font-style: italic;
+    }
+    #storyOutput .em {
+      color: var(--blush);
+    }
+
+    /* ============================================
+       PLAYBACK CONTROLS (floating bottom bar)
+    ============================================ */
+    .controls {
+      position: fixed;
+      bottom: 1.2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 150;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(16,12,28,0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 0.55rem 1rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(155,93,229,0.08);
+    }
+    body.light .controls { background: rgba(230,220,255,0.92); }
+
+    .ctrl-btn {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--lavender);
+      font-size: 0.9rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .ctrl-btn:hover {
+      background: rgba(155,93,229,0.2);
+      border-color: var(--violet);
+      color: var(--pearl);
+    }
+    .ctrl-btn.primary {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--orchid), var(--violet));
+      border-color: transparent;
+      color: #fff;
+      font-size: 1.1rem;
+      box-shadow: 0 0 16px var(--glow);
+    }
+    .ctrl-btn.primary:hover { transform: scale(1.08); }
+
+    .speed-display {
+      font-family: var(--font-sans);
+      font-size: 0.68rem;
+      color: var(--lavender);
+      min-width: 32px;
+      text-align: center;
+      letter-spacing: 0.05em;
+    }
+
+    .ctrl-divider {
+      width: 1px;
+      height: 22px;
+      background: var(--border);
+      margin: 0 0.2rem;
+    }
+
+    /* ============================================
+       COMPLETION CARD (shown after story ends)
+    ============================================ */
+    #completionCard {
+      display: none;
+      margin-top: 3rem;
+      padding: 2.5rem 2rem;
+      background: rgba(46,26,71,0.3);
+      border: 1px solid rgba(155,93,229,0.25);
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+      text-align: center;
+      animation: fadeUp 0.8s ease forwards;
+    }
+    body.light #completionCard { background: rgba(200,168,240,0.18); }
+    #completionCard h3 {
+      font-family: var(--font-ui);
+      font-size: 1.1rem;
+      letter-spacing: 0.1em;
+      color: var(--lavender);
+      margin-bottom: 0.8rem;
+    }
+    #completionCard p {
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+    .btn-gallery, .btn-contact {
+      display: inline-block;
+      margin: 0.3rem;
+      padding: 0.7rem 1.6rem;
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-decoration: none;
+      border-radius: 3px;
+      transition: all 0.3s;
+    }
+    .btn-gallery {
+      background: rgba(155,93,229,0.2);
+      border: 1px solid rgba(155,93,229,0.4);
+      color: var(--lavender);
+    }
+    .btn-gallery:hover { background: rgba(155,93,229,0.35); box-shadow: 0 0 20px var(--glow); }
+    .btn-contact {
+      background: linear-gradient(135deg, var(--orchid), var(--violet));
+      border: 1px solid transparent;
+      color: #fff;
+    }
+    .btn-contact:hover { transform: translateY(-2px); box-shadow: 0 6px 24px var(--glow); }
+
+    @keyframes fadeUp {
+      from { opacity:0; transform: translateY(20px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+
+    /* ============================================
+       CONFETTI CANVAS
+    ============================================ */
+    #confettiCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: 9000;
+      pointer-events: none;
+    }
+
+    /* ============================================
+       PAGE TRANSITION
+    ============================================ */
+    .page-transition {
+      position: fixed; inset:0;
+      background: var(--ink);
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    .page-transition.active { opacity:1; pointer-events: all; }
+
+    /* ============================================
+       FOOTER
+    ============================================ */
+    .story-footer {
+      text-align: center;
+      padding: 2rem 1rem 1rem;
+      font-family: var(--font-ui);
+      font-size: 0.5rem;
+      letter-spacing: 0.25em;
+      color: rgba(200,168,240,0.2);
+      text-transform: uppercase;
+    }
+
+    /* ============================================
+       RESPONSIVE
+    ============================================ */
+    @media (max-width: 480px) {
+      .story-outer { padding-top: 110px; padding-left: 1.1rem; padding-right: 1.1rem; }
+      .controls { gap: 0.35rem; padding: 0.5rem 0.75rem; bottom: 0.8rem; }
+      .ctrl-btn { width: 32px; height: 32px; font-size: 0.8rem; }
+      .ctrl-btn.primary { width: 40px; height: 40px; }
+      .nav-title { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Confetti canvas -->
+<canvas id="confettiCanvas"></canvas>
+
+<!-- Page transition overlay -->
+<div class="page-transition" id="pageTransition"></div>
+
+<!-- Reading progress bar -->
+<div id="progressBar"></div>
+
+<!-- ============================================
+     TOP NAVBAR
+============================================ -->
+<nav class="navbar">
+  <div class="nav-left">
+    <a href="index.html" class="nav-back" id="backBtn">← Home</a>
+  </div>
+  <span class="nav-title">My Student Teaching Internship</span>
+  <div class="nav-right">
+    <button class="icon-btn" id="themeToggle" title="Toggle theme">☀</button>
+    <button class="icon-btn" id="musicToggle" title="Toggle music">♪</button>
+  </div>
+</nav>
+
+<!-- Reading meta info bar -->
+<div class="meta-bar">
+  <span>📖 <span id="readingTime">~5 min read</span></span>
+  <span id="pctDisplay">0% read</span>
+  <span>✍ <span id="wordCount">—</span> words</span>
+</div>
+
+<!-- ============================================
+     STORY CONTENT
+============================================ -->
+<div class="story-outer">
+
+  <!-- Chapter header -->
+  <header class="story-header">
+    <p class="story-label">A True Story · For Belinda</p>
+    <h1 class="story-title">My Student Teaching<br>Internship Experience</h1>
+    <p class="story-subtitle">📚 Written with honesty, humour, and a little bit of heart</p>
+  </header>
+
+  <!-- Typewriter output -->
+  <div id="storyOutput"></div>
+
+  <!-- Completion card (shown at the end) -->
+  <div id="completionCard">
+    <h3>✨ The End</h3>
+    <p>Thank you for reading this, Belinda.<br>Every word of it was written with you in mind.</p>
+    <a href="gallery.html" class="btn-gallery">View Gallery →</a>
+    <a href="contact.html" class="btn-contact">A Message For You 💌</a>
+  </div>
+
+</div>
+
+<!-- Story footer -->
+<footer class="story-footer">
+  <p>For Belinda · Written with love · Always</p>
+</footer>
+
+<!-- ============================================
+     PLAYBACK CONTROLS BAR
+============================================ -->
+<div class="controls">
+  <!-- Restart -->
+  <button class="ctrl-btn" id="btnRestart" title="Restart">↩</button>
+  <!-- Speed down -->
+  <button class="ctrl-btn" id="btnSlower" title="Slower">−</button>
+  <!-- Speed display -->
+  <span class="speed-display" id="speedDisplay">1×</span>
+  <!-- Speed up -->
+  <button class="ctrl-btn" id="btnFaster" title="Faster">+</button>
+
+  <div class="ctrl-divider"></div>
+
+  <!-- Play / Pause (primary) -->
+  <button class="ctrl-btn primary" id="btnPlayPause" title="Play / Pause">▶</button>
+
+  <div class="ctrl-divider"></div>
+
+  <!-- Skip to end -->
+  <button class="ctrl-btn" id="btnSkip" title="Skip to end">⏭</button>
+</div>
+
+<!-- Hidden audio -->
+<audio id="bgMusic" loop preload="none"></audio>
+
+<!-- ============================================
+     JAVASCRIPT
+============================================ -->
+<script>
+/* ------------------------------------------------
+   STORY DATA
+   Each object = one paragraph.
+   "emoji" renders before the paragraph text.
+------------------------------------------------ */
+const STORY_PARAGRAPHS = [
+  { text: "My student teaching internship journey started around April and May 2025 when we were given internship letters to submit to schools where we intended to undertake our teaching practice for an entire semester. I chose Ghanata SHS because it was relatively close to my home. Fortunately, my application was accepted, and I received an acceptance letter signed by both the Head of Academics and the Assistant Headmistress.", emoji: "📚" },
+  { text: "Fast forward to September 2025, we were given another letter to submit to the same school where we had received our acceptance. Everything was gradually falling into place.", emoji: "📝" },
+  { text: "The internship officially began on 10th November 2025. After submitting my introductory letter, I was directed to the ICT Department to meet my Head of Department (HOD). There, I was assigned a mentor — a fairly old gentleman, but an incredibly cool person. 😄 He already knew why I was there, so there wasn't much explanation needed. I simply followed his lead and observed how things were done.", emoji: "🏫" },
+  { text: "My mentor taught four classes: one Form 3 class and three Form 1 classes. For the first few days, I followed him everywhere, observing his teaching methods and classroom management skills. Within a week, I had adapted quite well, although being naturally shy made things a little challenging. 😂", emoji: "👀" },
+  { text: "Then came my first real test.", emoji: "⚡" },
+  { text: "One day, while sitting in the staff common room, my mentor called to inform me that he wouldn't be able to make it to school and asked me to handle one of his classes. Instantly, panic set in. 😅 I froze for a moment because I wasn't prepared, but there was no turning back.", emoji: "😰" },
+  { text: "I entered the classroom and was welcomed by nearly 100 students. My legs were shaking, and my voice wasn't as loud or confident as I wanted it to be. Managing such a large class seemed impossible at first. However, I decided to tell them that excessive noise easily distracted me and that I would appreciate their cooperation for just one hour.", emoji: "🎓" },
+  { text: "To my surprise, they listened. 😳", emoji: "🤫" },
+  { text: "The class became calm and disciplined. I introduced the lesson and taught them as best as I could. Time seemed to move so slowly that day, but I successfully got through the lesson.", emoji: "✅" },
+  { text: "From that point onward, teaching gradually became part of my daily routine. Before I knew it, I was handling all three Form 1 classes almost independently. Of course, I made mistakes along the way — some silly, some avoidable — but I learned from every one of them and kept improving.", emoji: "📈" },
+  { text: "One thing I am particularly proud of is that throughout my teaching practice, I never had to shout at a class. My students knew I disliked unnecessary noise, and somehow they always respected that. 😊", emoji: "🕊️" },
+  { text: "The first semester eventually came to an end, and the students wrote their examinations before going home around mid December 2025.", emoji: "📅" },
+  { text: "Interestingly, it was during this internship period that I once told you I saw someone who looked exactly like you. For a brief moment, I completely drifted into my own thoughts and couldn't stop thinking about you. 😂❤️", emoji: "❤️" },
+  { text: "January arrived much faster than expected, and school resumed. This time, I was dealing mainly with Form 2 and Form 3 students. My mentor did not teach Form 2, but there was a challenge: our university supervisor could visit at any time between January and April. To prepare myself, I needed a Form 2 class to teach.", emoji: "🗓️" },
+  { text: "Fortunately, I got one.", emoji: "🙌" },
+  { text: "At the same time, I assisted other teachers whenever necessary. Managing the Form 2 students wasn't particularly difficult. Most of them liked me, especially the girls. 😅 Keeping their attention for an hour was never much of a problem.", emoji: "😄" },
+  { text: "Although there was pressure, I maintained my composure and professionalism. Every day I met new students, and before long, many people across the school recognized me — perhaps because of my dark complexion, soft voice, friendly smile, and calm nature. 😄", emoji: "🌟" },
+  { text: "In March 2026, my supervisor finally arrived for assessment. I taught my lesson while he observed. Afterward, he gave me feedback that genuinely surprised me. He praised my rapport with the students and described me as a very good teacher.", emoji: "🏆" },
+  { text: "Honestly, hearing that shocked me. Me? A good teacher? 😂 But it felt encouraging and rewarding after all the effort I had put in.", emoji: "🥹" },
+  { text: "The internship continued until 30th April 2026, when I received my final endorsement and had my envelope stamped by the Head of Academics.", emoji: "📜" },
+  { text: "Before leaving, I visited my favorite class to inform them that I was departing. Teaching was never really my long term career goal, but saying goodbye was harder than I expected.", emoji: "👋" },
+  { text: "The atmosphere became emotional. 😢 Some students cried, some struggled to express how they felt, while others tried to act tough. Regardless of how they reacted, the news affected all of them.", emoji: "🥺" },
+  { text: "I am quite certain they miss me — especially my Form 2 students. ❤️", emoji: "💜" },
+  { text: "As for the Form 3 class, they were a completely different story. 😂 Those students seemed to care about absolutely nothing. Whenever I observed my mentor teaching them, some would be sleeping while others focused on their own activities.", emoji: "😴" },
+  { text: "One day, when my mentor was absent, I attempted to teach them myself. Honestly, I think heaven felt sorry for me that day. 😭 They treated me more like a course mate than a teacher. Even so, I did my best to manage them.", emoji: "😭" },
+  { text: "Invigilating their mock examinations was another challenge altogether. I was naturally soft spoken, although I tried to be strict when necessary. Despite my efforts, those students definitely gave me a hard time.", emoji: "📋" },
+  { text: "Looking back, my internship experience taught me many valuable lessons about teaching, patience, communication, leadership, and classroom management. It pushed me outside my comfort zone and helped me grow both personally and professionally.", emoji: "🌱" },
+  { text: "I genuinely gave my best throughout my time at Ghanata SHS, and I hope that my best was enough. 🙏🏾", emoji: "🙏🏾" },
+  { text: "Now, all that remains is to wait for my final results for the course and see how everything turns out. 😊", emoji: "✨" },
+];
+
+/* ------------------------------------------------
+   STATE
+------------------------------------------------ */
+let currentPara   = 0;   // which paragraph we're on
+let currentChar   = 0;   // which character in that paragraph
+let isPlaying     = false;
+let typingTimeout = null;
+let speedLevel    = 2;   // 1=slow, 2=normal, 3=fast, 4=very fast, 5=instant
+let completed     = false;
+
+const SPEED_MAP = {
+  1: { ms: 55,  label: '0.5×' },
+  2: { ms: 28,  label: '1×'   },
+  3: { ms: 14,  label: '2×'   },
+  4: { ms: 5,   label: '4×'   },
+  5: { ms: 0,   label: '⚡'   },
+};
+
+/* ------------------------------------------------
+   DOM REFS
+------------------------------------------------ */
+const outputEl     = document.getElementById('storyOutput');
+const btnPlay      = document.getElementById('btnPlayPause');
+const btnRestart   = document.getElementById('btnRestart');
+const btnSlower    = document.getElementById('btnSlower');
+const btnFaster    = document.getElementById('btnFaster');
+const btnSkip      = document.getElementById('btnSkip');
+const speedDisp    = document.getElementById('speedDisplay');
+const progressBar  = document.getElementById('progressBar');
+const pctDisp      = document.getElementById('pctDisplay');
+const completionEl = document.getElementById('completionCard');
+const confettiEl   = document.getElementById('confettiCanvas');
+
+/* ------------------------------------------------
+   INIT — build empty paragraph elements
+------------------------------------------------ */
+function init() {
+  outputEl.innerHTML = '';
+  STORY_PARAGRAPHS.forEach((_, i) => {
+    const p = document.createElement('p');
+    p.id = `para-${i}`;
+    outputEl.appendChild(p);
+  });
+  completionEl.style.display = 'none';
+
+  // Word count & reading time
+  const totalWords = STORY_PARAGRAPHS.reduce((a, p) => a + p.text.split(' ').length, 0);
+  document.getElementById('wordCount').textContent = totalWords.toLocaleString();
+  const mins = Math.ceil(totalWords / 200);
+  document.getElementById('readingTime').textContent = `~${mins} min read`;
+
+  updateProgress();
+  restorePosition();
+}
+
+/* ------------------------------------------------
+   RESTORE from localStorage
+------------------------------------------------ */
+function restorePosition() {
+  const saved = localStorage.getItem('belinda_story_pos');
+  if (saved) {
+    const { para, char } = JSON.parse(saved);
+    // Reveal all completed paragraphs instantly
+    for (let i = 0; i < para; i++) renderParaFull(i);
+    currentPara = para;
+    currentChar = char;
+    updateProgress();
+  }
+}
+
+function savePosition() {
+  localStorage.setItem('belinda_story_pos', JSON.stringify({ para: currentPara, char: currentChar }));
+}
+
+/* ------------------------------------------------
+   RENDER a paragraph fully (no typing)
+------------------------------------------------ */
+function renderParaFull(idx) {
+  if (idx >= STORY_PARAGRAPHS.length) return;
+  const { text, emoji } = STORY_PARAGRAPHS[idx];
+  const el = document.getElementById(`para-${idx}`);
+  el.textContent = emoji ? `${emoji}  ${text}` : text;
+  el.classList.add('visible');
+}
+
+/* ------------------------------------------------
+   TYPING ENGINE
+------------------------------------------------ */
+function typeNext() {
+  if (!isPlaying || completed) return;
+  if (currentPara >= STORY_PARAGRAPHS.length) { finishStory(); return; }
+
+  const { text, emoji } = STORY_PARAGRAPHS[currentPara];
+  const full = emoji ? `${emoji}  ${text}` : text;
+  const el   = document.getElementById(`para-${currentPara}`);
+
+  // Make paragraph visible when we start it
+  if (currentChar === 0) el.classList.add('visible');
+
+  // Remove old cursor from previous element
+  document.querySelectorAll('.type-cursor').forEach(c => c.remove());
+
+  if (currentChar <= full.length) {
+    const cursor = document.createElement('span');
+    cursor.className = 'type-cursor';
+    el.textContent = full.slice(0, currentChar);
+    el.appendChild(cursor);
+    currentChar++;
+
+    const delay = SPEED_MAP[speedLevel].ms;
+    if (delay === 0) {
+      // Instant mode: finish paragraph in one go
+      el.textContent = full;
+      el.classList.add('visible');
+      currentChar = full.length + 1;
+      typingTimeout = setTimeout(typeNext, 200);
+    } else {
+      typingTimeout = setTimeout(typeNext, delay);
+    }
+  } else {
+    // Paragraph done
+    el.textContent = full;
+    savePosition();
+    currentPara++;
+    currentChar = 0;
+    updateProgress();
+    // Pause briefly between paragraphs
+    typingTimeout = setTimeout(typeNext, 400);
+  }
+}
+
+/* ------------------------------------------------
+   PLAY / PAUSE
+------------------------------------------------ */
+function play() {
+  isPlaying = true;
+  btnPlay.textContent = '⏸';
+  typeNext();
+}
+
+function pause() {
+  isPlaying = false;
+  btnPlay.textContent = '▶';
+  clearTimeout(typingTimeout);
+  // Remove cursor
+  document.querySelectorAll('.type-cursor').forEach(c => c.remove());
+}
+
+btnPlay.addEventListener('click', () => {
+  if (completed) return;
+  if (isPlaying) pause(); else play();
+});
+
+/* ------------------------------------------------
+   RESTART
+------------------------------------------------ */
+function restart() {
+  pause();
+  completed     = false;
+  currentPara   = 0;
+  currentChar   = 0;
+  localStorage.removeItem('belinda_story_pos');
+  completionEl.style.display = 'none';
+  init();
+  // Small delay then play
+  setTimeout(play, 300);
+}
+btnRestart.addEventListener('click', restart);
+
+/* ------------------------------------------------
+   SPEED CONTROLS
+------------------------------------------------ */
+btnFaster.addEventListener('click', () => {
+  if (speedLevel < 5) speedLevel++;
+  speedDisp.textContent = SPEED_MAP[speedLevel].label;
+});
+btnSlower.addEventListener('click', () => {
+  if (speedLevel > 1) speedLevel--;
+  speedDisp.textContent = SPEED_MAP[speedLevel].label;
+});
+
+/* ------------------------------------------------
+   SKIP TO END
+------------------------------------------------ */
+btnSkip.addEventListener('click', () => {
+  pause();
+  for (let i = 0; i < STORY_PARAGRAPHS.length; i++) renderParaFull(i);
+  currentPara = STORY_PARAGRAPHS.length;
+  currentChar = 0;
+  updateProgress();
+  finishStory();
+});
+
+/* ------------------------------------------------
+   FINISH
+------------------------------------------------ */
+function finishStory() {
+  if (completed) return;
+  completed = true;
+  isPlaying = false;
+  btnPlay.textContent = '✓';
+  document.querySelectorAll('.type-cursor').forEach(c => c.remove());
+  completionEl.style.display = 'block';
+  updateProgress(100);
+  localStorage.removeItem('belinda_story_pos');
+  launchConfetti();
+}
+
+/* ------------------------------------------------
+   PROGRESS BAR & PERCENTAGE
+------------------------------------------------ */
+function updateProgress(forcePct) {
+  const pct = forcePct !== undefined
+    ? forcePct
+    : Math.round((currentPara / STORY_PARAGRAPHS.length) * 100);
+  progressBar.style.width = pct + '%';
+  pctDisp.textContent     = pct + '% read';
+}
+
+/* Scroll-based progress for reading progress after all typed */
+window.addEventListener('scroll', () => {
+  if (!completed) return;
+  const scrolled = window.scrollY;
+  const total    = document.body.scrollHeight - window.innerHeight;
+  if (total > 0) {
+    const pct = Math.min(100, Math.round((scrolled / total) * 100));
+    progressBar.style.width = pct + '%';
+    pctDisp.textContent = pct + '% read';
+  }
+});
+
+/* ------------------------------------------------
+   CONFETTI
+------------------------------------------------ */
+function launchConfetti() {
+  const canvas = confettiEl;
+  const ctx    = canvas.getContext('2d');
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const pieces = Array.from({ length: 120 }, () => ({
+    x:    Math.random() * canvas.width,
+    y:    Math.random() * -canvas.height,
+    w:    Math.random() * 10 + 4,
+    h:    Math.random() * 6  + 3,
+    r:    Math.random() * Math.PI * 2,
+    dr:   (Math.random() - 0.5) * 0.15,
+    vy:   Math.random() * 3 + 1.5,
+    vx:   (Math.random() - 0.5) * 2,
+    color: [`hsl(${270 + Math.random()*60},80%,70%)`,
+            `hsl(${330 + Math.random()*30},80%,75%)`,
+            `hsl(${50  + Math.random()*20},90%,70%)`][Math.floor(Math.random()*3)],
+    alpha: 1,
+  }));
+
+  let frame = 0;
+  function drawConfetti() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach(p => {
+      p.y  += p.vy;
+      p.x  += p.vx;
+      p.r  += p.dr;
+      if (frame > 180) p.alpha -= 0.008;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.r);
+      ctx.globalAlpha = Math.max(0, p.alpha);
+      ctx.fillStyle   = p.color;
+      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.restore();
+    });
+    frame++;
+    if (frame < 320) requestAnimationFrame(drawConfetti);
+    else ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  drawConfetti();
+}
+
+/* ------------------------------------------------
+   THEME TOGGLE
+------------------------------------------------ */
+(function() {
+  const btn  = document.getElementById('themeToggle');
+  const body = document.body;
+  const saved = localStorage.getItem('storyTheme');
+  if (saved === 'light') { body.classList.add('light'); btn.textContent = '☽'; }
+  btn.addEventListener('click', () => {
+    body.classList.toggle('light');
+    const isLight = body.classList.contains('light');
+    btn.textContent = isLight ? '☽' : '☀';
+    localStorage.setItem('storyTheme', isLight ? 'light' : 'dark');
+  });
+})();
+
+/* ------------------------------------------------
+   MUSIC TOGGLE
+------------------------------------------------ */
+(function() {
+  const btn   = document.getElementById('musicToggle');
+  const audio = document.getElementById('bgMusic');
+  let playing = false;
+  btn.addEventListener('click', () => {
+    if (!playing) {
+      audio.play().catch(() => {});
+      btn.textContent = '♫';
+      btn.style.color = 'var(--violet)';
+    } else {
+      audio.pause();
+      btn.textContent = '♪';
+      btn.style.color = '';
+    }
+    playing = !playing;
+  });
+})();
+
+/* ------------------------------------------------
+   NAV BACK — smooth transition
+------------------------------------------------ */
+document.getElementById('backBtn').addEventListener('click', function(e) {
+  e.preventDefault();
+  pause();
+  const overlay = document.getElementById('pageTransition');
+  overlay.classList.add('active');
+  setTimeout(() => { window.location.href = this.getAttribute('href'); }, 650);
+});
+
+/* ------------------------------------------------
+   PAGE LOAD FADE IN
+------------------------------------------------ */
+window.addEventListener('load', () => {
+  const overlay = document.getElementById('pageTransition');
+  overlay.style.opacity = '1';
+  overlay.style.pointerEvents = 'all';
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    overlay.style.transition = 'opacity 0.7s ease';
+    overlay.style.opacity    = '0';
+    setTimeout(() => { overlay.style.pointerEvents = 'none'; }, 700);
+  }));
+});
+
+/* ------------------------------------------------
+   START
+------------------------------------------------ */
+init();
+// Auto play after brief moment
+setTimeout(play, 1200);
+</script>
+</body>
+</html>
