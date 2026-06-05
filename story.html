@@ -862,13 +862,21 @@ function launchConfetti() {
   const audio = document.getElementById('bgMusic');
   let playing = false;
 
-  // Auto-play if it was playing on the previous page
+  // Resume from where it left off
+  const savedTime = parseFloat(localStorage.getItem('musicTime') || '0');
+  audio.currentTime = savedTime;
+
   if (localStorage.getItem('musicPlaying') === 'true') {
     audio.play().catch(() => {});
     playing = true;
     btn.textContent = '♫';
     btn.style.color = 'var(--violet)';
   }
+
+  // Save position continuously
+  audio.addEventListener('timeupdate', () => {
+    localStorage.setItem('musicTime', audio.currentTime);
+  });
 
   btn.addEventListener('click', () => {
     if (!playing) {

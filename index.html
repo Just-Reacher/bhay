@@ -555,6 +555,7 @@
     This page holds a story <em>written only for you</em> — woven from moments,
     feelings, and everything left unsaid. Find a quiet place, let the world fade,
     and allow yourself to simply be here.
+    Read it with the music on, or in silence. Either way, I hope it brings a smile to your face and warmth to your heart.
   </p>
 
   <!-- CTA Button -->
@@ -719,13 +720,21 @@ document.getElementById('beginBtn').addEventListener('click', function(e) {
   const audio = document.getElementById('bgMusic');
   let playing = false;
 
-  // Auto-play if it was playing on the previous page
+  // Resume from where it left off
+  const savedTime = parseFloat(localStorage.getItem('musicTime') || '0');
+  audio.currentTime = savedTime;
+
   if (localStorage.getItem('musicPlaying') === 'true') {
     audio.play().catch(() => {});
     playing = true;
     btn.textContent = '♫';
     btn.style.color = 'var(--violet)';
   }
+
+  // Save position continuously
+  audio.addEventListener('timeupdate', () => {
+    localStorage.setItem('musicTime', audio.currentTime);
+  });
 
   btn.addEventListener('click', () => {
     if (!playing) {
